@@ -6,11 +6,11 @@ namespace GameUpSDK.Editor
 {
     public class GameUpSetupWindow : EditorWindow
     {
-        private const string PathSDK = "Assets/GameUpSDK/Prefab/SDK.prefab";
-        private const string PathAppsFlyer = "Assets/GameUpSDK/Prefab/AppsFlyerObject.prefab";
-        private const string PathIronSource = "Assets/GameUpSDK/Prefab/IronSourceAds.prefab";
-        private const string PathAdMob = "Assets/GameUpSDK/Prefab/AdmobAds.prefab";
-        private const string PathUnityAds = "Assets/GameUpSDK/Prefab/UnityAds.prefab";
+        private const string PathSDK = "Assets/GameUpSDK/Runtime/Prefab/SDK.prefab";
+        private const string PathAppsFlyer = "Assets/GameUpSDK/Runtime/Prefab/AppsFlyerObject.prefab";
+        private const string PathIronSource = "Assets/GameUpSDK/Runtime/Prefab/IronSourceAds.prefab";
+        private const string PathAdMob = "Assets/GameUpSDK/Runtime/Prefab/AdmobAds.prefab";
+        private const string PathUnityAds = "Assets/GameUpSDK/Runtime/Prefab/UnityAds.prefab";
 
         private int _activeTab;
         private readonly string[] _tabs = { "AppsFlyer", "IronSource", "AdMob", "UnityAds" };
