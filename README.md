@@ -54,15 +54,7 @@ Tải và import các gói sau trước khi cài GameUp SDK:
 **Cách 2: Dùng Tool tự động (Sau khi import GameUp SDK)**
 Xem hướng dẫn ở Bước 3 bên dưới.
 
-### Bước 3: Import GameUp SDK
-
-1. Trong Unity, mở **Window > Package Manager**.
-2. Bấm nút **+** và chọn **Add package from git URL...**.
-3. Dán đường dẫn Git sau:
-   https://github.com/DuyOhze119/game-up-sdk.git
-4. Bấm **Add**.
-
-### Bước 4: Hoàn tất cài đặt Dependencies & Mediation
+### Bước 3: Hoàn tất cài đặt Dependencies & Mediation
 
 **Cài đặt Ads Mediation (Bắt buộc):**
    - Vào menu **Window > Package Manager > Unity Registry** tìm kiếm ```Ads Mediation``` để cài đặt **Ads Mediation**.
@@ -70,6 +62,14 @@ Xem hướng dẫn ở Bước 3 bên dưới.
    - Tại tab **NetWorks**:
      - Tìm **UnityAds**: Nhấn **Install**.
      - Tìm **AdMob**: Nhấn **Install** (để IronSource nhận diện AdMob).
+
+### Bước 4: Import GameUp SDK
+
+1. Trong Unity, mở **Window > Package Manager**.
+2. Bấm nút **+** và chọn **Add package from git URL...**.
+3. Dán đường dẫn Git sau:
+   https://github.com/DuyOhze119/game-up-sdk.git
+4. Bấm **Add**.
 
 ---
 
