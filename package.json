@@ -1,0 +1,12 @@
+{
+    "name": "com.gameup.sdk",
+    "displayName": "GameUp SDK",
+    "version": "1.0.0",
+    "unity": "2022.3",
+    "unityRelease": "62f3",
+    "description": "Internal SDK for Ads, Analytics, Firebase, AppsFlyer",
+    "author": {
+      "name": "gounLDyu"
+    }
+  }
+  
