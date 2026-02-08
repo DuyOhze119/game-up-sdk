@@ -65,7 +65,7 @@ Xem hướng dẫn ở Bước 3 bên dưới.
 ### Bước 4: Hoàn tất cài đặt Dependencies & Mediation
 
 **Cài đặt Ads Mediation (Bắt buộc):**
-   - Vào menu **Window > Package Manager > Unity Registry** tìm kiếm Ads để cài đặt **Ads Mediation**.
+   - Vào menu **Window > Package Manager > Unity Registry** tìm kiếm ```Ads Mediation``` để cài đặt **Ads Mediation**.
    - Vào menu **Ads Mediation > Netword Manager**.
    - Tại tab **NetWorks**:
      - Tìm **UnityAds**: Nhấn **Install**.
