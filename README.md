@@ -62,7 +62,7 @@ Tải và import các gói sau trước khi cài GameUp SDK:
 
 ### Bước 4: Import GameUp SDK
 
-- **GameUpSDK:** https://drive.google.com/file/d/1kCBcKoNa1HqmJ8DNYHs8L33IJVcRmWDw/view?usp=drive_link
+- **GameUpSDK:** https://drive.google.com/file/d/1--MPRB_ho5Oo8ISmf4ZplYhD55iI_lwr/view?usp=drive_link
 
 ---
 
