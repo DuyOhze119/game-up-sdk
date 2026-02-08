@@ -62,11 +62,7 @@ Tải và import các gói sau trước khi cài GameUp SDK:
 
 ### Bước 4: Import GameUp SDK
 
-1. Trong Unity, mở **Window > Package Manager**.
-2. Bấm nút **+** và chọn **Add package from git URL...**.
-3. Dán đường dẫn Git sau:
-   https://github.com/DuyOhze119/game-up-sdk.git
-4. Bấm **Add**.
+- **GameUpSDK:** https://drive.google.com/file/d/1kCBcKoNa1HqmJ8DNYHs8L33IJVcRmWDw/view?usp=drive_link
 
 ---
 
