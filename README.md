@@ -148,11 +148,6 @@ Các method khác (ví dụ: `LogStartLoading`, `LogCompleteLoading`, `LogButton
 
 ## Xử lý sự cố
 
-### Giải quyết dependency / cài đặt lần đầu
-
-- **Đảm bảo kết nối Internet ổn định** khi chạy **Tools > GameUp SDK > Install All Dependencies**. Trình cài đặt tải các SDK bên ngoài và manifest package từ mạng. Kết nối bị gián đoạn hoặc chậm có thể gây cài đặt không đầy đủ hoặc thất bại.
-- Nếu cài đặt thất bại, kiểm tra kết nối, thử lại **Install All Dependencies**, và sửa mọi lỗi trên Unity Console (ví dụ: package thiếu hoặc URL không hợp lệ).
-
 ### Quảng cáo không hiển thị
 
 - Xác nhận **SDK.prefab** có trong scene đầu tiên và **AdsManager** đã được khởi tạo (ví dụ: sau consent/GDPR nếu cần).
