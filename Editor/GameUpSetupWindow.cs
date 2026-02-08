@@ -1,16 +1,44 @@
 using System;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace GameUpSDK.Editor
 {
     public class GameUpSetupWindow : EditorWindow
     {
-        private const string PathSDK = "Assets/GameUpSDK/Runtime/Prefab/SDK.prefab";
-        private const string PathAppsFlyer = "Assets/GameUpSDK/Runtime/Prefab/AppsFlyerObject.prefab";
-        private const string PathIronSource = "Assets/GameUpSDK/Runtime/Prefab/IronSourceAds.prefab";
-        private const string PathAdMob = "Assets/GameUpSDK/Runtime/Prefab/AdmobAds.prefab";
-        private const string PathUnityAds = "Assets/GameUpSDK/Runtime/Prefab/UnityAds.prefab";
+        private const string PrefabNameSDK = "SDK.prefab";
+        private const string PrefabNameAppsFlyer = "AppsFlyerObject.prefab";
+        private const string PrefabNameIronSource = "IronSourceAds.prefab";
+        private const string PrefabNameAdMob = "AdmobAds.prefab";
+        private const string PrefabNameUnityAds = "UnityAds.prefab";
+
+        private static string GetPackageRoot()
+        {
+            var guids = AssetDatabase.FindAssets("GameUpSetupWindow t:Script");
+            foreach (var g in guids)
+            {
+                var path = AssetDatabase.GUIDToAssetPath(g);
+                if (path.Contains("GameUpSDK") || path.Contains("com.gameup.sdk"))
+                {
+                    var dir = System.IO.Path.GetDirectoryName(path);
+                    if (!string.IsNullOrEmpty(dir))
+                    {
+                        var parent = System.IO.Path.GetDirectoryName(dir);
+                        if (!string.IsNullOrEmpty(parent))
+                            return parent.Replace('\\', '/');
+                    }
+                    break;
+                }
+            }
+            return "Assets/GameUpSDK";
+        }
+
+        private static string PathSDK => GetPackageRoot() + "/Runtime/Prefab/" + PrefabNameSDK;
+        private static string PathAppsFlyer => GetPackageRoot() + "/Runtime/Prefab/" + PrefabNameAppsFlyer;
+        private static string PathIronSource => GetPackageRoot() + "/Runtime/Prefab/" + PrefabNameIronSource;
+        private static string PathAdMob => GetPackageRoot() + "/Runtime/Prefab/" + PrefabNameAdMob;
+        private static string PathUnityAds => GetPackageRoot() + "/Runtime/Prefab/" + PrefabNameUnityAds;
 
         private int _activeTab;
         private readonly string[] _tabs = { "AppsFlyer", "IronSource", "AdMob", "UnityAds" };
@@ -84,6 +112,13 @@ namespace GameUpSDK.Editor
             if (GUILayout.Button("Save Configuration", GUILayout.Height(32)))
             {
                 SaveToPrefabs();
+            }
+
+            EditorGUILayout.Space(8);
+            EditorGUILayout.HelpBox("Thêm SDK vào scene hiện tại (sẽ tạo instance từ prefab SDK).", MessageType.None);
+            if (GUILayout.Button("Tạo SDK trong Scene hiện tại", GUILayout.Height(28)))
+            {
+                CreateSDKInCurrentScene();
             }
 
             EditorGUILayout.EndScrollView();
@@ -218,6 +253,24 @@ namespace GameUpSDK.Editor
                 _saveErrors = "Prefab not found at:\n" + string.Join("\n", errors);
             else
                 Debug.Log("[GameUpSDK] Configuration Saved!");
+        }
+
+        private void CreateSDKInCurrentScene()
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PathSDK);
+            if (prefab == null)
+            {
+                _saveErrors = "Không tìm thấy prefab SDK tại: " + PathSDK;
+                return;
+            }
+            var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+            if (instance != null)
+            {
+                Selection.activeGameObject = instance;
+                EditorGUIUtility.PingObject(instance);
+                EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+                Debug.Log("[GameUpSDK] Đã thêm SDK vào scene hiện tại.");
+            }
         }
 
         private bool SaveAppsFlyer()
