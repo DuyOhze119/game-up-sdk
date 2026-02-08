@@ -51,9 +51,6 @@ Tải và import các gói sau trước khi cài GameUp SDK:
 - **Firebase (Analytics & App):** https://drive.google.com/drive/folders/10F_6GM68T809iY1fpj5jYYGjF_ntUkch?usp=sharing
 - **AppsFlyer:** https://drive.google.com/file/d/1GcIQf1jDWbt3nGYWbRF8KQ9b0zT6sbOB/view?usp=sharing
 
-**Cách 2: Dùng Tool tự động (Sau khi import GameUp SDK)**
-Xem hướng dẫn ở Bước 3 bên dưới.
-
 ### Bước 3: Hoàn tất cài đặt Dependencies & Mediation
 
 **Cài đặt Ads Mediation (Bắt buộc):**
