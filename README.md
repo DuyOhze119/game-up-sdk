@@ -3,168 +3,204 @@
 ## Tổng quan dự án
 
 **Tên:** GameUp SDK  
+**Mục đích:** Giải pháp Unity All-in-One cho **Quảng cáo** và **Phân tích**, giúp tối ưu hóa quy trình tích hợp và vận hành game.
 
-**Mục đích:** Giải pháp Unity all-in-one cho **Quảng cáo** và **Phân tích**:
-
-- **Quảng cáo:** IronSource, AdMob và Unity Ads qua một lớp trung gian duy nhất với cơ chế waterfall (mạng nào có sẵn quảng cáo trước thì hiển thị).
-- **Phân tích:** Firebase và AppsFlyer — sự kiện được ghi nhận vào cả hai nơi khi áp dụng được.
+- **Quảng cáo (Ads):** Tích hợp IronSource (LevelPlay), AdMob và Unity Ads qua một lớp trung gian duy nhất. Hỗ trợ cơ chế waterfall thông minh (mạng nào có quảng cáo trước thì hiển thị).
+- **Phân tích (Analytics):** Tích hợp Firebase và AppsFlyer. Sự kiện được tự động ghi nhận vào cả hai hệ thống để đối soát dữ liệu chính xác.
 
 ---
 
-## Yêu cầu kỹ thuật
+## Yêu cầu kỹ thuật (Prerequisites)
+
+Đảm bảo dự án Unity và cấu hình build của bạn đáp ứng các yêu cầu sau trước khi tích hợp:
 
 | Yêu cầu | Giá trị |
 |--------|---------|
 | **Phiên bản Unity khuyến nghị** | 2022.3.62f3 (LTS) |
-| **Nền tảng** | Android, iOS |
+| **Nền tảng hỗ trợ** | Android, iOS |
 | **Android – Minimum API Level** | 24 (Android 7.0) |
 | **Android – Target API Level** | 36 (Android 15) |
 
-Đảm bảo dự án Unity và cài đặt build của bạn đáp ứng các yêu cầu trên trước khi dùng SDK.
-
 ---
 
-## Hướng dẫn cài đặt & thiết lập
+## Hướng dẫn Cài đặt (Installation)
 
-### Bước 1: Import package qua Git URL
+### Bước 1: Cấu hình .gitignore (Quan trọng)
+Để tránh đẩy các file thư viện C++ nặng của Firebase lên Git gây lỗi hoặc phình to repo, hãy thêm đoạn sau vào cuối file `.gitignore` của dự án:
+
+```
+# --- Firebase Ignored Files (Auto match versions) ---
+Assets/Firebase/Plugins/x86_64/FirebaseCppAnalytics*.so
+Assets/Firebase/Plugins/x86_64/FirebaseCppAnalytics*.so.meta
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp*.so
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp*.so.meta
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp*.bundle.meta
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp*.bundle
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp*.dll
+Assets/Firebase/Plugins/x86_64/FirebaseCppApp*.dll.meta
+```
+
+### Bước 2: Cài đặt các SDK nền tảng (Dependencies)
+
+Bạn có 2 cách để cài đặt các thư viện lõi (IronSource, AdMob, Firebase, AppsFlyer):
+
+**Cách 1: Cài thủ công (Manual - Khuyên dùng nếu muốn kiểm soát version)**
+Tải và import các gói sau trước khi cài GameUp SDK:
+- **IronSource (LevelPlay):** https://drive.google.com/file/d/1kCBcKoNa1HqmJ8DNYHs8L33IJVcRmWDw/view?usp=drive_link
+- **Google Mobile Ads (AdMob):** https://drive.google.com/file/d/1rveiwzLxUXN4uQIju5-mE7m3E9NEZ29k/view?usp=sharing
+- **Firebase (Analytics & App):** https://drive.google.com/drive/folders/10F_6GM68T809iY1fpj5jYYGjF_ntUkch?usp=sharing
+- **AppsFlyer:** https://drive.google.com/file/d/1GcIQf1jDWbt3nGYWbRF8KQ9b0zT6sbOB/view?usp=sharing
+
+**Cách 2: Dùng Tool tự động (Sau khi import GameUp SDK)**
+Xem hướng dẫn ở Bước 3 bên dưới.
+
+### Bước 3: Import GameUp SDK
 
 1. Trong Unity, mở **Window > Package Manager**.
 2. Bấm nút **+** và chọn **Add package from git URL...**.
-3. Nhập Git URL của GameUp SDK (ví dụ: `https://github.com/DuyOhze119/game-up-sdk.git` hoặc URL repo thực tế của bạn).
-4. Bấm **Add**. Unity sẽ xử lý và import package.
+3. Dán đường dẫn Git sau:
+   https://github.com/DuyOhze119/game-up-sdk.git
+4. Bấm **Add**.
 
-### Bước 2: Cài đặt các dependency SDK bên ngoài
+### Bước 4: Hoàn tất cài đặt Dependencies & Mediation
 
-1. Vào **Tools > GameUp SDK > Install All Dependencies**.
-2. Chờ quá trình hoàn tất. Bước này cài đặt hoặc cập nhật các SDK bên ngoài cần cho Quảng cáo và Phân tích (IronSource, AdMob, Unity Ads, Firebase, AppsFlyer, v.v.).
-
-### Bước 3: Cấu hình App ID và Key
-
-1. Vào **Tools > GameUp SDK > Setup**.
-2. Trong cửa sổ GameUp SDK Setup, nhập **App ID** và **Key** cho từng mạng bạn dùng (ví dụ: AdMob App ID, IronSource App Key, Unity Ads Game ID, cấu hình Firebase, AppsFlyer Dev Key).
-3. Lưu cài đặt.
-
-### Bước 4: Thêm SDK vào scene đầu tiên
-
-1. Mở **scene đầu tiên** của game (thường là scene được load khi khởi động).
-2. Tìm **SDK.prefab** trong package (ví dụ: trong `Assets/GameUpSDK/Runtime/Prefab/` hoặc thư mục `Prefab` của package).
-3. Kéo **SDK.prefab** vào Hierarchy để nó có mặt khi game chạy.
-
-Prefab chứa bootstrap của SDK (ví dụ: `AdsManager`, analytics và các đối tượng liên quan). Giữ nó trong scene đầu tiên để khởi tạo trước khi bất kỳ quảng cáo hay analytics nào được dùng.
+**Cài đặt Ads Mediation (Bắt buộc):**
+   - Vào menu **Ads Mediation > Integration Manager**.
+   - Tại tab **SDKs**:
+     - Tìm **UnityAds**: Nhấn **Install**.
+     - Tìm **AdMob**: Nhấn **Install** (để IronSource nhận diện AdMob).
 
 ---
 
-## Hướng dẫn lập trình – Quảng cáo (AdsManager)
+## Hướng dẫn Thiết lập (Setup)
 
-Quảng cáo được hiển thị qua **Singleton** `AdsManager.Instance`. SDK dùng cơ chế **waterfall**: khi bạn yêu cầu quảng cáo, mạng đã đăng ký đầu tiên có quảng cáo sẵn sẽ hiển thị. Mọi lời gọi nên thực hiện từ **main thread**.
+### 1. Cấu hình App ID và Key
+1. Vào menu **Tools > GameUp SDK > Setup**.
+2. Nhập đầy đủ thông tin:
+   - **AdMob App ID** (Android/iOS).
+   - **IronSource App Key**.
+   - **AppsFlyer Dev Key** & **App ID** (iOS).
+3. Nhấn **Save Configuration**.
 
-### Hiển thị Interstitial
+### 2. Thêm SDK vào Scene
+1. Mở **scene đầu tiên** của game (Splash/Loading/Login).
+2. Tìm file **SDK.prefab** trong thư mục Packages (đường dẫn: `Packages/GameUp Base SDK/Prefabs` hoặc `Assets/GameUpSDK/Prefab`).
+3. Kéo **SDK.prefab** vào Hierarchy.
+   *(Lưu ý: Prefab này chứa `AdsManager` và `DontDestroyOnLoad`, chỉ cần có mặt ở scene đầu tiên).*
 
+---
+
+## Hướng dẫn Lập trình – Quảng cáo (AdsManager)
+
+Quảng cáo được gọi thông qua Singleton `AdsManager.Instance`. Mọi lời gọi hàm nên được thực hiện từ **Main Thread**.
+
+### Hiển thị Interstitial (Quảng cáo chuyển cảnh)
 ```csharp
 using GameUpSDK;
 
-// Callback tùy chọn
 AdsManager.Instance.ShowInterstitial(
-    placementName: "between_levels",
-    onSuccess: () => { /* đã hiển thị quảng cáo, tiếp tục game */ },
-    onFail: () => { /* không có quảng cáo hoặc lỗi, tiếp tục không quảng cáo */ }
+    placementName: "Level_End", // Tên vị trí để tracking
+    onSuccess: () => {
+        // Đã hiển thị quảng cáo xong, tiếp tục game
+        Debug.Log("Interstitial Closed");
+    },
+    onFail: () => {
+        // Lỗi load, không có quảng cáo, hoặc lỗi mạng -> Tiếp tục game
+        Debug.Log("Interstitial Failed or Not Ready");
+    }
 );
 ```
 
-Tham số `placementName` (ví dụ: `"between_levels"`, `"game_over"`) dùng cho theo dõi và báo cáo (Firebase/AppsFlyer).
-
-### Hiển thị Rewarded Video
+### Hiển thị Rewarded Video (Quảng cáo trả thưởng)
 
 ```csharp
 using GameUpSDK;
 
 AdsManager.Instance.ShowRewardedVideo(
-    placementName: "extra_life",
-    onSuccess: () => { /* người chơi xem hết video, cấp thưởng */ },
-    onFail: () => { /* bỏ qua hoặc không có quảng cáo */ }
+    placementName: "Shop_Free_Gold",
+    onSuccess: () => {
+        // Người chơi đã xem hết video -> Trả thưởng
+        GiveGold(100);
+    },
+    onFail: () => {
+        // Người chơi tắt sớm hoặc không có quảng cáo -> Không trả thưởng
+        ShowMessage("Ad not available");
+    }
 );
 ```
-
-`placementName` cũng dùng cho theo dõi.
 
 ### Hiển thị Banner
 
 ```csharp
 using GameUpSDK;
 
-AdsManager.Instance.ShowBanner(placementName: "main_menu");
+// Hiển thị
+AdsManager.Instance.ShowBanner(placementName: "Main_Menu");
+
+// Ẩn
+AdsManager.Instance.HideBanner(placementName: "Main_Menu");
 ```
-
-Để ẩn banner:
-
-```csharp
-AdsManager.Instance.HideBanner(placementName: "main_menu");
-```
-
-Dùng cùng `placementName` khi hiển thị và ẩn để tracking đúng vị trí.
 
 ---
 
-## Hướng dẫn lập trình – Analytics (GameUpAnalytics)
+## Hướng dẫn Lập trình – Analytics (GameUpAnalytics)
 
-**GameUpAnalytics** gửi sự kiện tới **cả Firebase và AppsFlyer** khi áp dụng được (ví dụ: sự kiện level gửi tới Firebase và, với level complete, tới AppsFlyer dưới dạng `af_level_achieved`). Bạn chỉ cần gọi một method cho mỗi sự kiện; SDK xử lý ghi log kép.
+Hệ thống tự động log sự kiện song song lên **Firebase** và **AppsFlyer**.
 
-### Bắt đầu level (Level Start)
-
-Gọi khi người chơi bắt đầu một level (ví dụ: sau khi bấm "Chơi" hoặc load level).
+### Bắt đầu màn chơi (Level Start)
 
 ```csharp
 using GameUpSDK;
 
-// level: số thứ tự level (bắt đầu từ 1); index: số lần thử ở level này
+// level: Level hiện tại (int)
+// index: Số lần chơi lại level này (int)
 GameUpAnalytics.LogLevelStart(level: 5, index: 1);
 ```
 
-### Hoàn thành level (Level Complete)
-
-Gọi khi người chơi hoàn thành level thành công. Ghi log vào Firebase và AppsFlyer.
+### Hoàn thành màn chơi (Level Complete)
 
 ```csharp
 using GameUpSDK;
 
-// level, index (lần thử), thời gian tính bằng giây, score tùy chọn
+// timeSeconds: Thời gian chơi (float)
+// score: Điểm số đạt được (int)
 GameUpAnalytics.LogLevelComplete(level: 5, index: 1, timeSeconds: 120f, score: 1000);
 ```
 
-### Thua level (Level Fail)
-
-Gọi khi người chơi thua level.
+### Thua màn chơi (Level Fail)
 
 ```csharp
 using GameUpSDK;
 
-// level, index (số lần thử), thời gian tính bằng giây từ lúc bắt đầu level đến lúc thua
 GameUpAnalytics.LogLevelFail(level: 5, index: 2, timeSeconds: 45f);
 ```
 
-Các method khác (ví dụ: `LogStartLoading`, `LogCompleteLoading`, `LogButtonClick`, `LogWaveStart`, `LogPurchase`, v.v.) có sẵn cho loading, UI, wave và monetization — dùng theo nhu cầu thiết kế của bạn.
+---
+
+## Xử lý sự cố (Troubleshooting)
+
+### 1. Quảng cáo không hiển thị (No Fill / Not Ready)
+
+* Đảm bảo **SDK.prefab** đã có trong scene.
+* Kiểm tra internet trên thiết bị.
+* Gọi `AdsManager.Instance.RequestAll()` thủ công nếu cần preload lại.
+* Kiểm tra log Unity với từ khóa `[GameUpSDK]` hoặc `IronSource`.
+
+### 2. Lỗi Build Android (Duplicate Class / Dependencies)
+
+* Vào **Assets > External Dependency Manager > Android Resolver > Force Resolve**.
+* Nếu lỗi liên quan đến Firebase `x86_64`, kiểm tra lại cấu hình `.gitignore` và xóa folder `Library` để build lại.
+
+### 3. Analytics không thấy dữ liệu
+
+* Firebase: Dữ liệu realtime có thể trễ, hãy dùng **DebugView** để test.
+* AppsFlyer: Kiểm tra **Dev Key** đã chính xác trong phần Setup chưa.
+
+### 4. Không thấy menu "Tools > GameUp SDK"
+
+* Kiểm tra lại console xem có lỗi biên dịch (Compile Error) nào không.
+* Đảm bảo đã import đủ các dependencies (AdMob, Firebase...).
 
 ---
 
-## Xử lý sự cố
-
-### Quảng cáo không hiển thị
-
-- Xác nhận **SDK.prefab** có trong scene đầu tiên và **AdsManager** đã được khởi tạo (ví dụ: sau consent/GDPR nếu cần).
-- Gọi `AdsManager.Instance.RequestAll()` sau khi khởi tạo (và sau consent) để các mạng preload interstitial và rewarded video.
-- Dùng cùng `placementName` nhất quán khi hiển thị/ẩn và tracking.
-
-### Analytics không xuất hiện
-
-- Đảm bảo Firebase và AppsFlyer đã cấu hình trong **Tools > GameUp SDK > Setup** và prefab SDK có trong scene.
-- Trong môi trường phát triển, sự kiện có thể mất thời gian mới hiện trên Firebase DebugView hoặc dashboard AppsFlyer; kiểm tra bộ lọc và app đã chọn.
-
-### Thiếu mục menu
-
-- Nếu **GameUp SDK** không xuất hiện dưới **Tools**, kiểm tra package đã được import đúng và không có lỗi script hoặc assembly definition trong thư mục GameUp SDK. Sửa lỗi biên dịch và mở lại Unity Editor nếu cần.
-
----
-
-## Ghi chú định dạng
-
-Tài liệu này dùng Markdown chuẩn. Các ví dụ code là C# và có thể copy-paste vào script game; chỉnh tên tham số (ví dụ: `placementName`, `level`, `index`, `timeSeconds`, `score`) cho phù hợp logic game của bạn.
+*Documentation maintained by GameUp Team.*
