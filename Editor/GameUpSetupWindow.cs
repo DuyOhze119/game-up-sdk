@@ -40,6 +40,26 @@ namespace GameUpSDK.Editor
         private static string PathAdMob => GetPackageRoot() + "/Runtime/Prefab/" + PrefabNameAdMob;
         private static string PathUnityAds => GetPackageRoot() + "/Runtime/Prefab/" + PrefabNameUnityAds;
 
+        private const string ConfigAssetPath = "Assets/Resources/GameUpSDKConfig.asset";
+
+        private static bool IsAssetInPackage(string assetPath)
+        {
+            return !string.IsNullOrEmpty(assetPath) && assetPath.StartsWith("Packages/", StringComparison.Ordinal);
+        }
+
+        private static GameUpSDK.GameUpSDKConfig GetOrCreateConfigAsset()
+        {
+            if (!System.IO.Directory.Exists(System.IO.Path.Combine(UnityEngine.Application.dataPath, "Resources")))
+                AssetDatabase.CreateFolder("Assets", "Resources");
+            var config = AssetDatabase.LoadAssetAtPath<GameUpSDK.GameUpSDKConfig>(ConfigAssetPath);
+            if (config == null)
+            {
+                config = ScriptableObject.CreateInstance<GameUpSDK.GameUpSDKConfig>();
+                AssetDatabase.CreateAsset(config, ConfigAssetPath);
+            }
+            return config;
+        }
+
         private int _activeTab;
         private readonly string[] _tabs = { "AppsFlyer", "IronSource", "AdMob", "UnityAds" };
 
@@ -111,7 +131,14 @@ namespace GameUpSDK.Editor
             EditorGUILayout.Space(16);
             if (GUILayout.Button("Save Configuration", GUILayout.Height(32)))
             {
-                SaveToPrefabs();
+                try
+                {
+                    SaveToPrefabs();
+                }
+                catch (System.Exception ex)
+                {
+                    _saveErrors = ex.Message;
+                }
             }
 
             EditorGUILayout.Space(8);
@@ -169,6 +196,26 @@ namespace GameUpSDK.Editor
 
         private void LoadFromPrefabs()
         {
+            var config = AssetDatabase.LoadAssetAtPath<GameUpSDK.GameUpSDKConfig>(ConfigAssetPath);
+            if (config != null)
+            {
+                _appsFlyerDevKey = config.appsFlyerDevKey ?? "";
+                _appsFlyerAppId = config.appsFlyerAppId ?? "";
+                _ironSourceAppKey = config.ironSourceAppKey ?? "";
+                _ironSourceBannerId = config.ironSourceBannerId ?? "";
+                _ironSourceInterstitialId = config.ironSourceInterstitialId ?? "";
+                _ironSourceRewardedId = config.ironSourceRewardedId ?? "";
+                _admobBannerId = config.admobBannerId ?? "";
+                _admobInterstitialId = config.admobInterstitialId ?? "";
+                _admobRewardedId = config.admobRewardedId ?? "";
+                _admobAppOpenId = config.admobAppOpenId ?? "";
+                _unityAdsAppKey = config.unityAdsAppKey ?? "";
+                _unityAdsBannerId = config.unityAdsBannerId ?? "";
+                _unityAdsInterstitialId = config.unityAdsInterstitialId ?? "";
+                _unityAdsRewardedId = config.unityAdsRewardedId ?? "";
+                _loadErrors = null;
+                return;
+            }
             var errors = new System.Collections.Generic.List<string>();
             if (!LoadAppsFlyer()) errors.Add("Prefab not found at: " + PathAppsFlyer);
             if (!LoadIronSource()) errors.Add("Prefab not found at: " + PathIronSource);
@@ -243,6 +290,24 @@ namespace GameUpSDK.Editor
 
         private void SaveToPrefabs()
         {
+            var config = GetOrCreateConfigAsset();
+            config.appsFlyerDevKey = _appsFlyerDevKey ?? "";
+            config.appsFlyerAppId = _appsFlyerAppId ?? "";
+            config.ironSourceAppKey = _ironSourceAppKey ?? "";
+            config.ironSourceBannerId = _ironSourceBannerId ?? "";
+            config.ironSourceInterstitialId = _ironSourceInterstitialId ?? "";
+            config.ironSourceRewardedId = _ironSourceRewardedId ?? "";
+            config.admobBannerId = _admobBannerId ?? "";
+            config.admobInterstitialId = _admobInterstitialId ?? "";
+            config.admobRewardedId = _admobRewardedId ?? "";
+            config.admobAppOpenId = _admobAppOpenId ?? "";
+            config.unityAdsAppKey = _unityAdsAppKey ?? "";
+            config.unityAdsBannerId = _unityAdsBannerId ?? "";
+            config.unityAdsInterstitialId = _unityAdsInterstitialId ?? "";
+            config.unityAdsRewardedId = _unityAdsRewardedId ?? "";
+            EditorUtility.SetDirty(config);
+            AssetDatabase.SaveAssetIfDirty(config);
+
             var errors = new System.Collections.Generic.List<string>();
             if (!SaveAppsFlyer()) errors.Add(PathAppsFlyer);
             if (!SaveIronSource()) errors.Add(PathIronSource);
@@ -252,7 +317,7 @@ namespace GameUpSDK.Editor
             if (errors.Count > 0)
                 _saveErrors = "Prefab not found at:\n" + string.Join("\n", errors);
             else
-                Debug.Log("[GameUpSDK] Configuration Saved!");
+                Debug.Log("[GameUpSDK] Configuration saved to " + ConfigAssetPath + (IsAssetInPackage(PathAppsFlyer) ? " (package prefabs are read-only)." : "."));
         }
 
         private void CreateSDKInCurrentScene()
@@ -286,7 +351,8 @@ namespace GameUpSDK.Editor
             Set(so, "appID", _appsFlyerAppId);
             so.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(comp);
-            PrefabUtility.SavePrefabAsset(go);
+            if (!IsAssetInPackage(AssetDatabase.GetAssetPath(go)))
+                PrefabUtility.SavePrefabAsset(go);
             return true;
         }
 
@@ -303,7 +369,8 @@ namespace GameUpSDK.Editor
             Set(so, "rewardedVideoAdUnitId", _ironSourceRewardedId);
             so.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(comp);
-            PrefabUtility.SavePrefabAsset(go);
+            if (!IsAssetInPackage(AssetDatabase.GetAssetPath(go)))
+                PrefabUtility.SavePrefabAsset(go);
             return true;
         }
 
@@ -320,7 +387,8 @@ namespace GameUpSDK.Editor
             Set(so, "appOpenAdUnitId", _admobAppOpenId);
             so.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(comp);
-            PrefabUtility.SavePrefabAsset(go);
+            if (!IsAssetInPackage(AssetDatabase.GetAssetPath(go)))
+                PrefabUtility.SavePrefabAsset(go);
             return true;
         }
 
@@ -337,7 +405,8 @@ namespace GameUpSDK.Editor
             Set(so, "rewardedVideoAdUnitId", _unityAdsRewardedId);
             so.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(comp);
-            PrefabUtility.SavePrefabAsset(go);
+            if (!IsAssetInPackage(AssetDatabase.GetAssetPath(go)))
+                PrefabUtility.SavePrefabAsset(go);
             return true;
         }
 
