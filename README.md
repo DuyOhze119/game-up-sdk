@@ -65,8 +65,9 @@ Xem hướng dẫn ở Bước 3 bên dưới.
 ### Bước 4: Hoàn tất cài đặt Dependencies & Mediation
 
 **Cài đặt Ads Mediation (Bắt buộc):**
-   - Vào menu **Ads Mediation > Integration Manager**.
-   - Tại tab **SDKs**:
+   - Vào menu **Window > Package Manager > Unity Registry** tìm kiếm Ads để cài đặt **Ads Mediation**.
+   - Vào menu **Ads Mediation > Netword Manager**.
+   - Tại tab **NetWorks**:
      - Tìm **UnityAds**: Nhấn **Install**.
      - Tìm **AdMob**: Nhấn **Install** (để IronSource nhận diện AdMob).
 
